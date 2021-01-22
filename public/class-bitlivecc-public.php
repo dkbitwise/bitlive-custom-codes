@@ -24,6 +24,21 @@ class BITLIVECC_Public {
 	}
 
 	/**
+	 * @param $menu
+	 *
+	 * @return mixed
+	 */
+	public function remove_extra_menus( $menu ) {
+		foreach ( $menu as $menu_key => $menu_data ) {
+			if ('newmessage' !== $menu_key){
+				unset($menu[$menu_key]);
+			}
+		}
+
+		return $menu;
+	}
+
+	/**
 	 * @return BITLIVECC_Public|null
 	 */
 	public static function get_instance() {
@@ -32,21 +47,5 @@ class BITLIVECC_Public {
 		}
 
 		return self::$ins;
-	}
-
-	/**
-	 * @param $menu
-	 *
-	 * @return mixed
-	 */
-	public function remove_extra_menus( $menu ) {
-		//dk_pc_debug( $menu );
-		foreach ( $menu as $menu_key => $menu_data ) {
-			if ('newmessage' !== $menu_key){
-				unset($menu[$menu_key]);
-			}
-		}
-
-		return $menu;
 	}
 }
