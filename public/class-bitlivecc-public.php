@@ -20,7 +20,7 @@ class BITLIVECC_Public {
 	 * BITLIVECC_Public constructor.
 	 */
 	public function __construct() {
-		//add_filter( 'fep_menu_buttons', array( $this, 'remove_extra_menus' ), 99, 1 );
+		add_filter( 'fep_menu_buttons', array( $this, 'remove_extra_menus' ), 99, 1 );
 	}
 
 	/**
