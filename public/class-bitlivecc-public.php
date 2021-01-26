@@ -65,6 +65,7 @@ class BITLIVECC_Public {
 	public function get_recipients() {
 		global $wpdb;
 		$recipients      = [];
+		$recipients[0] = '-Select Recipient-';
 		$current_user_id = get_current_user_id();
 		if ( $current_user_id < 1 ) {
 			return $recipients;
@@ -88,9 +89,8 @@ class BITLIVECC_Public {
 					$employee_ids    = wp_list_pluck( $employee_result, 'emp_id' );
 					if ( is_array( $employee_ids ) && count( $employee_ids ) > 0 ) {
 						$emp_result = $wpdb->get_results( "SELECT `id`,`name`, `email` FROM $employee_table WHERE `id` IN (" . implode( ',', $employee_ids ) . ")", ARRAY_A );
-						dk_pc_debug( $emp_result );
 						foreach ( $emp_result as $emp ) {
-							$recipients[ $emp['id'] ] = $emp['name'];
+							$recipients[ $emp['email'] ] = $emp['name'];
 						}
 					}
 				}
