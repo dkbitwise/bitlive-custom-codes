@@ -20,8 +20,16 @@ class BITLIVECC_Public {
 	 * BITLIVECC_Public constructor.
 	 */
 	public function __construct() {
+		add_filter( 'wp_enqueue_scripts', array( $this, 'enqueue_public_scripts' ) );
 		add_filter( 'fep_menu_buttons', array( $this, 'remove_extra_menus' ), 99, 1 );
 		add_filter( 'fep_form_fields_after_process', array( $this, 'alter_message_recipients' ), 99, 2 );
+	}
+
+	/**
+	 * Enqueuing public styles and scripts
+	 */
+	public function enqueue_public_scripts() {
+		wp_enqueue_style( 'bitlive-public-style', plugin_dir_url( __FILE__ ) . 'css/class-bitlivecc-public.css', array(), '1.0.0', 'all' );
 	}
 
 	/**
@@ -111,7 +119,7 @@ class BITLIVECC_Public {
 					if ( is_array( $student_ids ) && count( $student_ids ) > 0 ) {
 						$std_id_str = '';
 						foreach ( $student_ids as $student_id ) {
-							$std_id_str .="'" . $student_id . "'";
+							$std_id_str .= "'" . $student_id . "'";
 							if ( next( $student_ids ) ) {
 								$std_id_str .= ",";
 							}

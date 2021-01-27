@@ -1,0 +1,6 @@
+/**
+* Public style css
+*/
+.site-header .navbar-nav>li.fepm-message-box {
+    max-height: 10px;
+}
