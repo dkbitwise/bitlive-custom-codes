@@ -20,9 +20,20 @@ class BITLIVECC_Public {
 	 * BITLIVECC_Public constructor.
 	 */
 	public function __construct() {
-		add_filter( 'wp_enqueue_scripts', array( $this, 'enqueue_public_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_public_scripts' ) );
 		add_filter( 'fep_menu_buttons', array( $this, 'remove_extra_menus' ), 99, 1 );
 		add_filter( 'fep_form_fields_after_process', array( $this, 'alter_message_recipients' ), 99, 2 );
+	}
+
+	/**
+	 * @return BITLIVECC_Public|null
+	 */
+	public static function get_instance() {
+		if ( null === self::$ins ) {
+			self::$ins = new self;
+		}
+
+		return self::$ins;
 	}
 
 	/**
@@ -95,8 +106,13 @@ class BITLIVECC_Public {
 				$booking_result = $wpdb->get_results( "SELECT DISTINCT(`booking_id`) FROM $customer_booking_table WHERE `customer_id`='$customer_id'", ARRAY_A );
 				$booking_ids    = wp_list_pluck( $booking_result, 'booking_id' );
 				if ( is_array( $booking_ids ) && count( $booking_ids ) > 0 ) {
-					$employee_result = $wpdb->get_results( "SELECT DISTINCT(`emp_id`) FROM $current_booking_table WHERE `id` IN (" . implode( ',', $booking_ids ) . ")", ARRAY_A );
-					$employee_ids    = wp_list_pluck( $employee_result, 'emp_id' );
+					$employee_result = $wpdb->get_results( "SELECT `emp_id`,max(`date`) as date FROM $current_booking_table WHERE `id` IN (" . implode( ',', $booking_ids ) . ") GROUP BY `emp_id`", ARRAY_A );
+					$employee_ids = [];
+					foreach ($employee_result as $emp_data){
+						if (strtotime($emp_data['date']) > strtotime(date('Y-m-d'))){
+							$employee_ids[] = $emp_data['emp_id'];
+						}
+					}
 					if ( is_array( $employee_ids ) && count( $employee_ids ) > 0 ) {
 						$emp_result = $wpdb->get_results( "SELECT `id`,`name`, `email` FROM $employee_table WHERE `id` IN (" . implode( ',', $employee_ids ) . ")", ARRAY_A );
 						foreach ( $emp_result as $emp ) {
@@ -134,16 +150,5 @@ class BITLIVECC_Public {
 		}
 
 		return $recipients;
-	}
-
-	/**
-	 * @return BITLIVECC_Public|null
-	 */
-	public static function get_instance() {
-		if ( null === self::$ins ) {
-			self::$ins = new self;
-		}
-
-		return self::$ins;
 	}
 }
