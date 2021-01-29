@@ -26,6 +26,7 @@ class BITLIVECC_Public {
 	}
 
 	/**
+	 * Create an instance of this class
 	 * @return BITLIVECC_Public|null
 	 */
 	public static function get_instance() {
@@ -79,6 +80,7 @@ class BITLIVECC_Public {
 	}
 
 	/**
+	 * Return recipients for sending message on chat page.
 	 * @return array
 	 */
 	public function get_recipients() {
@@ -107,9 +109,9 @@ class BITLIVECC_Public {
 				$booking_ids    = wp_list_pluck( $booking_result, 'booking_id' );
 				if ( is_array( $booking_ids ) && count( $booking_ids ) > 0 ) {
 					$employee_result = $wpdb->get_results( "SELECT `emp_id`,max(`date`) as date FROM $current_booking_table WHERE `id` IN (" . implode( ',', $booking_ids ) . ") GROUP BY `emp_id`", ARRAY_A );
-					$employee_ids = [];
-					foreach ($employee_result as $emp_data){
-						if (strtotime($emp_data['date']) > strtotime(date('Y-m-d'))){
+					$employee_ids    = [];
+					foreach ( $employee_result as $emp_data ) {
+						if ( strtotime( $emp_data['date'] ) > strtotime( date( 'Y-m-d' ) ) ) {
 							$employee_ids[] = $emp_data['emp_id'];
 						}
 					}
