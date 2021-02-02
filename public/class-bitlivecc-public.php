@@ -23,6 +23,8 @@ class BITLIVECC_Public {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_public_scripts' ) );
 		add_filter( 'fep_menu_buttons', array( $this, 'remove_extra_menus' ), 99, 1 );
 		add_filter( 'fep_form_fields_after_process', array( $this, 'alter_message_recipients' ), 99, 2 );
+		add_action( 'fep_status_to_publish', array( $this, 'send_modified_email' ) );
+		add_filter('fep_enable_email_send',array($this,'disable_fep_email_on_message'));
 	}
 
 	/**
@@ -152,5 +154,24 @@ class BITLIVECC_Public {
 		}
 
 		return $recipients;
+	}
+
+	/**
+	 * @param $mgs
+	 * @param $prev_status
+	 */
+	public function send_modified_email( $mgs, $prev_status ) {
+		//wdm_mail_new('');
+		BITLIVECC_Core()->admin->log( 'Message: ' . print_r( $mgs,true ) );
+		BITLIVECC_Core()->admin->log( 'Previous status: ' . print_r( $prev_status,true ) );
+	}
+
+	/**
+	 * @param $enable
+	 *
+	 * @return false
+	 */
+	public function disable_fep_email_on_message($enable){
+		return false;
 	}
 }
