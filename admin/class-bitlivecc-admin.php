@@ -70,10 +70,10 @@ class BITLIVECC_Admin {
 				$student_email = $student['student_email'];
 				$student_fname = $student['student_fname'];
 				$student_lname = $student['student_lname'];
-				$password      = 'Psswrd@123';
+				$password      = 'Password@123';
 
 				if ( username_exists( $student_email ) == null && email_exists( $student_email ) == false ) {
-					$user_id = wp_create_user( $student_email, $password, $email );
+					$user_id = wp_create_user( $student_email, $password, $student_email );
 					$user    = get_user_by( 'id', $user_id );
 					$user->remove_role( 'subscriber' );
 					$user->add_role( 'student' );

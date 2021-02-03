@@ -23,8 +23,9 @@ class BITLIVECC_Public {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_public_scripts' ) );
 		add_filter( 'fep_menu_buttons', array( $this, 'remove_extra_menus' ), 99, 1 );
 		add_filter( 'fep_form_fields_after_process', array( $this, 'alter_message_recipients' ), 99, 2 );
-		add_action( 'fep_status_to_publish', array( $this, 'send_modified_email' ) );
-		add_filter('fep_enable_email_send',array($this,'disable_fep_email_on_message'));
+		add_filter( 'fep_enable_email_send', array( $this, 'disable_fep_email_on_message' ) );
+		add_shortcode( 'bw_student_register', array( $this, 'student_register_shortcode' ) );
+		add_action('init',array($this,'bitlive_check_student_registration'));
 	}
 
 	/**
@@ -43,7 +44,8 @@ class BITLIVECC_Public {
 	 * Enqueuing public styles and scripts
 	 */
 	public function enqueue_public_scripts() {
-		wp_enqueue_style( 'bitlive-public-style', plugin_dir_url( __FILE__ ) . 'css/class-bitlivecc-public.css', array(), '1.0.0', 'all' );
+		wp_enqueue_style( 'bitlive-public-style', plugin_dir_url( __FILE__ ) . 'css/bitlivecc-public.css', array(), '1.0.0', 'all' );
+		wp_enqueue_script( 'bitlive-public-script', plugin_dir_url( __FILE__ ) . 'js/bitlivecc-public.js', array(), '1.0.0', 'all' );
 	}
 
 	/**
@@ -157,21 +159,43 @@ class BITLIVECC_Public {
 	}
 
 	/**
-	 * @param $mgs
-	 * @param $prev_status
-	 */
-	public function send_modified_email( $mgs, $prev_status ) {
-		//wdm_mail_new('');
-		BITLIVECC_Core()->admin->log( 'Message: ' . print_r( $mgs,true ) );
-		BITLIVECC_Core()->admin->log( 'Previous status: ' . print_r( $prev_status,true ) );
-	}
-
-	/**
 	 * @param $enable
 	 *
 	 * @return false
 	 */
-	public function disable_fep_email_on_message($enable){
+	public function disable_fep_email_on_message( $enable ) {
 		return false;
+	}
+
+	/**
+	 * Registering a new student from front end
+	 */
+	public function student_register_shortcode() {
+		include_once __DIR__ . '/templates/student-registration-form.php';
+	}
+
+	public function bitlive_check_student_registration(){
+
+		if ( isset( $_POST['formtype'] ) && 'student_register' === $_POST['formtype'] ) {
+			$posted_data = wc_clean($_POST);
+			$first_name = $posted_data['first_name'];
+			$last_name = $posted_data['last_name'];
+			$user_email = $posted_data['user_email'];
+			$phone = $posted_data['phone'];
+			$password      = 'Password@123';
+
+			if ( username_exists( $user_email ) == null && email_exists( $user_email ) == false ) {
+				$user_id = wp_create_user( $user_email, $password, $user_email );
+				$user    = get_user_by( 'id', $user_id );
+				$user->remove_role( 'subscriber' );
+				$user->add_role( 'student' );
+				update_user_meta( $user_id, 'first_name', $first_name );
+				update_user_meta( $user_id, 'last_name', $last_name );
+
+				/*$sql = "UPDATE $bitlive_student_table SET `user_id`=$user_id WHERE `id`=$student_id";
+				$wpdb->query( $sql );*/
+			}
+
+		}
 	}
 }
