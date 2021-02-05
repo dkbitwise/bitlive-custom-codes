@@ -11,3 +11,35 @@
     position: relative;
     right: 45%;
 }
+.bwlive_overlay {
+    position: fixed;
+    width: 50%;
+    height: 50%;
+    top: 25%;
+    left: 25%;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.8);
+    z-index: 2;
+    cursor: pointer;
+}
+.bwlive_overlay .bw-close {
+    font-size: 15px;
+    color: #fff;
+    float: right;
+    position: relative;
+    right: 5px;
+    top: 5px;
+    border: 1px solid;
+    padding: 0 5px 0 5px;
+    border-radius: 10px;
+}
+.bwlive_overlay .bwlive-msg {
+    color: #fff;
+    font-size: 2em;
+    position: relative;
+    top: 25%;
+}
+.bwlive-bit-hide{
+    display: none;
+}

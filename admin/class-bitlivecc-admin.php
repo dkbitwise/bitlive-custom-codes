@@ -43,7 +43,7 @@ class BITLIVECC_Admin {
 		add_menu_page( __( 'Sync Students', 'bitlive-custom-codes' ), 'Sync Students', 'manage_options', 'bitlive-sync-live', array(
 			$this,
 			'bitlive_sync_students'
-		), 'dashicons-welcome-learn-more' );
+		), 'dashicons-welcome-learn-more', 11 );
 	}
 
 	/**

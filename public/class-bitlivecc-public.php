@@ -24,8 +24,8 @@ class BITLIVECC_Public {
 		add_filter( 'fep_menu_buttons', array( $this, 'remove_extra_menus' ), 99, 1 );
 		add_filter( 'fep_form_fields_after_process', array( $this, 'alter_message_recipients' ), 99, 2 );
 		add_filter( 'fep_enable_email_send', array( $this, 'disable_fep_email_on_message' ) );
-		add_shortcode( 'bw_student_register', array( $this, 'student_register_shortcode' ) );
-		add_action('init',array($this,'bitlive_check_student_registration'));
+		add_filter( 'fep_query_url_filter', array( $this, 'maybe_remove_new_message_link' ), 10, 2 );
+		add_action( 'fep_footer_note', array( $this, 'popup_message_model' ) );
 	}
 
 	/**
@@ -168,34 +168,34 @@ class BITLIVECC_Public {
 	}
 
 	/**
-	 * Registering a new student from front end
+	 * @param $url
+	 * @param $args
+	 *
+	 * @return mixed
 	 */
-	public function student_register_shortcode() {
-		include_once __DIR__ . '/templates/student-registration-form.php';
+	public function maybe_remove_new_message_link( $url, $args ) {
+		if ( 'newmessage' === $args['fepaction'] ) {
+			$current_user = wp_get_current_user();
+			$user_roles   = $current_user->roles;
+			if ( in_array( 'subscriber', $user_roles, true ) ) {
+				$recipients = $this->get_recipients();
+				if ( count( $recipients ) < 2 ) {
+					$url = 'javascript:void(0);';
+				}
+			}
+		}
+
+		return $url;
 	}
 
-	public function bitlive_check_student_registration(){
-
-		if ( isset( $_POST['formtype'] ) && 'student_register' === $_POST['formtype'] ) {
-			$posted_data = wc_clean($_POST);
-			$first_name = $posted_data['first_name'];
-			$last_name = $posted_data['last_name'];
-			$user_email = $posted_data['user_email'];
-			$phone = $posted_data['phone'];
-			$password      = 'Password@123';
-
-			if ( username_exists( $user_email ) == null && email_exists( $user_email ) == false ) {
-				$user_id = wp_create_user( $user_email, $password, $user_email );
-				$user    = get_user_by( 'id', $user_id );
-				$user->remove_role( 'subscriber' );
-				$user->add_role( 'student' );
-				update_user_meta( $user_id, 'first_name', $first_name );
-				update_user_meta( $user_id, 'last_name', $last_name );
-
-				/*$sql = "UPDATE $bitlive_student_table SET `user_id`=$user_id WHERE `id`=$student_id";
-				$wpdb->query( $sql );*/
-			}
-
-		}
+	/**
+	 * Creating an overlay message for no course registered
+	 */
+	public function popup_message_model() { ?>
+        <div class="bwlive-bit-hide bwlive_overlay">
+            <span class="bw-close">X</span>
+            <p class="bwlive-msg"><?php esc_html_e('You don\'t have a booking right now','bitlive-custom-codes'); ?></p>
+        </div>
+		<?php
 	}
 }
