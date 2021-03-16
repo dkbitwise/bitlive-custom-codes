@@ -6,7 +6,7 @@
     $(document).ready(function () {
         $('#fep-menu-newmessage').on('click', function () {
             let url = $(this).attr('href');
-            if('-1' !==url.search('newmessage')){
+            if('-1' ===url.search('newmessage')){
                $('.bwlive_overlay').removeClass('bwlive-bit-hide');
             }
         });

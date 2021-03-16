@@ -43,3 +43,25 @@
 .bwlive-bit-hide{
     display: none;
 }
+.fep-notification-bar#fep-notification-bar p {
+    color: #fff;
+    font-size: 25px;
+    font-weight: 400;
+    position: relative;
+    top: 40%;
+}
+.fep-notification-bar#fep-notification-bar {
+    position: fixed;
+    width: 50%;
+    height: 50%;
+    top: 25%;
+    left: 25%;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.8);
+    z-index: 2;
+    cursor: pointer;
+}
+.fep-notification-bar#fep-notification-bar .fep-notice-dismiss {
+    color: #fff;
+}

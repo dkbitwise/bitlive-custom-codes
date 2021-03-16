@@ -122,7 +122,8 @@ class BITLIVECC_Public {
 					if ( is_array( $employee_ids ) && count( $employee_ids ) > 0 ) {
 						$emp_result = $wpdb->get_results( "SELECT `id`,`name`, `email` FROM $employee_table WHERE `id` IN (" . implode( ',', $employee_ids ) . ")", ARRAY_A );
 						foreach ( $emp_result as $emp ) {
-							$recipients[ $emp['email'] ] = $emp['name'];
+							$emp_user                               = get_user_by( 'email', $emp['email'] );
+							$recipients[ $emp_user->user_nicename ] = $emp['name'];
 						}
 					}
 				}
@@ -148,7 +149,8 @@ class BITLIVECC_Public {
 						}
 						$student_details = $wpdb->get_results( "SELECT `student_fname`, `student_lname`, `student_email` FROM $bwlive_students WHERE `student_id` IN ($std_id_str)", ARRAY_A );
 						foreach ( $student_details as $student ) {
-							$recipients[ $student['student_email'] ] = $student['student_fname'] . ' ' . $student['student_lname'];
+							$student_user                               = get_user_by( 'email', $student['student_email'] );
+							$recipients[ $student_user->user_nicename ] = $student['student_fname'] . ' ' . $student['student_lname'];
 						}
 					}
 				}
@@ -194,7 +196,7 @@ class BITLIVECC_Public {
 	public function popup_message_model() { ?>
         <div class="bwlive-bit-hide bwlive_overlay">
             <span class="bw-close">X</span>
-            <p class="bwlive-msg"><?php esc_html_e('You don\'t have a booking right now','bitlive-custom-codes'); ?></p>
+            <p class="bwlive-msg"><?php esc_html_e( 'You don\'t have a booking right now', 'bitlive-custom-codes' ); ?></p>
         </div>
 		<?php
 	}
